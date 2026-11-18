@@ -1,0 +1,49 @@
+---
+# Role: app_setup — tasks/main.yml
+# Installs Python, copies the app, and starts it as a service
+
+- name: Install Python 3 and pip
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+    update_cache: yes
+
+- name: Create application directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy application source files
+  copy:
+    src: "../../../app/"
+    dest: "{{ app_dir }}/"
+    mode: '0644'
+  notify: Restart app service              # handler fires only when file changes
+
+- name: Copy requirements.txt
+  copy:
+    src: "../../../requirements.txt"
+    dest: "{{ app_dir }}/requirements.txt"
+    mode: '0644'
+
+- name: Install Python dependencies
+  pip:
+    requirements: "{{ app_dir }}/requirements.txt"
+    executable: pip3
+
+- name: Create systemd service for the app
+  template:
+    src: student-marks-api.service.j2
+    dest: /etc/systemd/system/student-marks-api.service
+    mode: '0644'
+  notify: Restart app service
+
+- name: Enable and start the app service
+  systemd:
+    name: student-marks-api
+    enabled: yes
+    state: started
+    daemon_reload: yes

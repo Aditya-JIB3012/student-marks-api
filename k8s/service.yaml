@@ -1,0 +1,15 @@
+---
+# Kubernetes Service — exposes the Deployment pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-marks-api-svc
+spec:
+  type: NodePort
+  selector:
+    app: student-marks-api             # must match Deployment labels exactly
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+      nodePort: 30080                  # access via http://<minikube-ip>:30080

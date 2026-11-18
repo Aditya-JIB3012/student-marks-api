@@ -1,0 +1,49 @@
+---
+# Kubernetes Deployment — student-marks-api
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-marks-api
+  labels:
+    app: student-marks-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: student-marks-api          # must match template labels exactly
+  template:
+    metadata:
+      labels:
+        app: student-marks-api
+    spec:
+      containers:
+        - name: student-marks-api
+          image: student-marks-api:latest
+          imagePullPolicy: Never       # use local image built for Minikube
+          ports:
+            - containerPort: 8000
+
+          # Read app port from ConfigMap (Deployment Enhancement)
+          env:
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: student-marks-config
+                  key: app_port
+
+          # Deployment Enhancement: liveness & readiness probes
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3

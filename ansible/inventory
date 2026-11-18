@@ -1,0 +1,3 @@
+# Ansible inventory — localhost acts as the target host
+[app_servers]
+localhost ansible_connection=local

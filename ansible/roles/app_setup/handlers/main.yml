@@ -1,0 +1,9 @@
+---
+# Role: app_setup — handlers/main.yml
+# Handler runs ONLY when notified (i.e., when a file actually changed)
+
+- name: Restart app service
+  systemd:
+    name: student-marks-api
+    state: restarted
+    daemon_reload: yes

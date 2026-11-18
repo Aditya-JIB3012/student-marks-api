@@ -1,0 +1,4 @@
+---
+# Role: app_setup — vars/main.yml
+app_port: 8000
+app_dir: /opt/student-marks-api

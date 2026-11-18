@@ -1,0 +1,13 @@
+---
+# Main Ansible playbook — configures the host and starts the Student Marks API
+- name: Configure server and deploy Student Marks API
+  hosts: app_servers
+  become: true
+
+  vars:
+    app_port: 8000                        # variable: port the app runs on
+    app_dir: /opt/student-marks-api       # variable: deployment directory
+    python_version: python3
+
+  roles:
+    - app_setup                           # role created with ansible-galaxy init
